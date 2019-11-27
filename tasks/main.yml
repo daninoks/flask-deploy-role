@@ -1,0 +1,49 @@
+---
+# tasks file for flask-deploy-role
+- name: create docker network
+  become: true
+  become_method: sudo
+  docker_network:
+    name: deploy
+    state: present
+  
+- name: log into docker hub registry
+  docker_login:
+    username: "daninoks"
+    password: "{{ dockerhub_password }}"
+
+- name: run 1st container
+  docker_container:
+    name: flask-5001-for-nginx
+    hostname: flask-5001-for-nginx
+    state: started
+    image: "daninoks/exam:flask"
+    pull: true
+    ports:
+      - "5001:5000"
+    networks:
+      - name: deploy
+
+- name: run 2nd container
+  docker_container:
+    name: flask-5002-for-nginx
+    hostname: flask-5002-for-nginx
+    state: started
+    image: "daninoks/exam:flask"
+    pull: true
+    ports:
+      - "5002:5000"
+    networks:
+      - name: deploy
+
+- name: run 3rd container
+  docker_container:
+    name: flask-5003-for-nginx
+    hostname: flask-5003-for-nginx
+    state: started
+    image: "daninoks/exam:flask"
+    pull: true
+    ports:
+      - "5003:5000"
+    networks:
+      - name: deploy
